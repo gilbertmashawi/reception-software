@@ -1,0 +1,20 @@
+[2026-02-02 09:21:30] cashup.php started - GET request
+[2026-02-02 09:21:30] User loaded: {"id":1,"username":"gilbert","full_name":"Gilbert","role":"reception"}
+[2026-02-02 09:21:30] Entering normal page rendering
+[2026-02-02 09:23:16] cashup.php started - GET request
+[2026-02-02 09:23:16] User loaded: {"id":1,"username":"gilbert","full_name":"Gilbert","role":"reception"}
+[2026-02-02 09:23:16] Entering normal page rendering
+[2026-02-02 09:23:29] cashup.php started - GET request
+[2026-02-02 09:23:29] User loaded: {"id":1,"username":"gilbert","full_name":"Gilbert","role":"reception"}
+[2026-02-02 09:23:29] Entering normal page rendering
+[2026-02-02 09:24:52] cashup.php loaded - Method: GET
+[2026-02-02 09:24:52] User: {"id":1,"username":"gilbert","full_name":"Gilbert","role":"reception"}
+[2026-02-02 09:24:52] Normal page rendering started
+[2026-02-02 09:24:59] cashup.php loaded - Method: POST
+[2026-02-02 09:24:59] User: {"id":1,"username":"gilbert","full_name":"Gilbert","role":"reception"}
+[2026-02-02 09:24:59] AJAX submit_cashup triggered
+[2026-02-02 09:24:59] POST data: {"ajax":"true","action":"submit_cashup","daily_vouchers_revenue":"0.00","daily_vouchers_cash_received":"0.00","daily_vouchers_change_given":"0.00","daily_vouchers_transactions":"0","daily_linkspot_revenue":"0.00","daily_linkspot_cash":"0.00","daily_linkspot_transactions":"0","daily_mall_revenue":"0.00","daily_mall_cash":"0.00","daily_mall_transactions":"0","grand_total_revenue":"0","grand_total_cash_in":"0","notes":"ffsdfs"}
+[2026-02-02 09:26:46] cashup.php loaded - Method: POST
+[2026-02-02 09:26:46] User: {"id":1,"username":"gilbert","full_name":"Gilbert","role":"reception"}
+[2026-02-02 09:26:46] AJAX submit_cashup triggered
+[2026-02-02 09:26:46] POST data: {"ajax":"true","action":"submit_cashup","daily_vouchers_revenue":"0.00","daily_vouchers_cash_received":"0.00","daily_vouchers_change_given":"0.00","daily_vouchers_transactions":"0","daily_linkspot_revenue":"0.00","daily_linkspot_cash":"0.00","daily_linkspot_transactions":"0","daily_mall_revenue":"0.00","daily_mall_cash":"0.00","daily_mall_transactions":"0","grand_total_revenue":"0","grand_total_cash_in":"0","notes":""}

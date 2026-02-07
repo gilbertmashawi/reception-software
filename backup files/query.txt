@@ -1,0 +1,2733 @@
+given the following
+
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jan 26, 2026 at 12:46 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `linkspot_db`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_log`
+--
+
+CREATE TABLE `activity_log` (
+  `id` int(11) NOT NULL,
+  `activity_date` date NOT NULL,
+  `activity_time` time NOT NULL,
+  `activity_type` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `details` text DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `activity_log`
+--
+
+INSERT INTO `activity_log` (`id`, `activity_date`, `activity_time`, `activity_type`, `description`, `details`, `user_id`, `created_at`) VALUES
+(18, '2026-01-25', '22:00:07', 'Linkspot Members', 'Added new member: Gilbert Takudzwa Mashawi', 'Code: LS2601001, Package: monthly, Rate: $65', 1, '2026-01-26 06:00:07'),
+(19, '2026-01-25', '23:50:59', 'Summarcity Tenants', 'Added new tenant: Gilbert Takudzwa Mashawi', 'Business: uz, Shop: S1, Rent: $32, Member Code: SM2601001', 1, '2026-01-26 07:50:59'),
+(20, '2026-01-26', '02:25:00', 'Meeting Rooms', 'Booked Board Room 1 for ghasajs', 'Hours: 1, Cost: $10', 1, '2026-01-26 10:25:00'),
+(21, '2026-01-26', '02:40:37', 'Meeting Rooms', 'Deleted booking for Board Room 1 by ghasajs', NULL, 1, '2026-01-26 10:40:37'),
+(22, '2026-01-26', '02:40:42', 'Meeting Rooms', 'Booked Meeting Room A for Gilbert', 'Hours: 1, Cost: $10', 1, '2026-01-26 10:40:42'),
+(23, '2026-01-26', '02:44:00', 'Meeting Rooms', 'Deleted booking for Meeting Room A by Gilbert', NULL, 1, '2026-01-26 10:44:00'),
+(24, '2026-01-26', '02:45:24', 'Meeting Rooms', 'Booked Meeting Room A for Gilbert', 'Hours: 0.083333333333333, Cost: $10', 1, '2026-01-26 10:45:24'),
+(25, '2026-01-26', '03:22:41', 'Vouchers Import', 'Imported 10 vouchers for batch: Import 2026-01-26 12:22:33', 'Voucher Type ID: 1', 1, '2026-01-26 11:22:41'),
+(26, '2026-01-26', '03:35:40', 'Vouchers Import', 'Imported 10 vouchers for batch: Import 2026-01-26 12:35:30', 'Voucher Type ID: 2', 1, '2026-01-26 11:35:40'),
+(27, '2026-01-26', '03:35:56', 'Vouchers Import', 'Imported 3 vouchers for batch: Import 2026-01-26 12:35:46', 'Voucher Type ID: 3', 1, '2026-01-26 11:35:56'),
+(28, '2026-01-26', '03:36:56', 'Vouchers Import', 'Imported 6 vouchers for batch: Import 2026-01-26 12:36:00', 'Voucher Type ID: 4', 1, '2026-01-26 11:36:56'),
+(29, '2026-01-26', '03:42:22', 'Vouchers Import', 'Imported 29 vouchers for batch: Import 2026-01-26 12:42:04', 'Voucher Type ID: 5', 1, '2026-01-26 11:42:22'),
+(30, '2026-01-26', '03:45:28', 'Linkspot Spaces', 'Recorded payment from Walter wale for january 2026', 'Amount: $65, Station ID: 51', 1, '2026-01-26 11:45:28');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_changes`
+--
+
+CREATE TABLE `customer_changes` (
+  `id` int(11) NOT NULL,
+  `customer_name` varchar(100) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('pending','given') DEFAULT 'pending',
+  `created_date` date NOT NULL DEFAULT curdate(),
+  `created_time` time NOT NULL DEFAULT curtime(),
+  `given_date` date DEFAULT NULL,
+  `given_time` time DEFAULT NULL,
+  `given_by` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customer_changes`
+--
+
+INSERT INTO `customer_changes` (`id`, `customer_name`, `amount`, `phone_number`, `notes`, `status`, `created_date`, `created_time`, `given_date`, `given_time`, `given_by`) VALUES
+(1, 'Gibson', 35.00, '', 'for summarcity', 'given', '2026-01-22', '02:37:01', '2026-01-22', '07:47:07', 'gilbert');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `linkspot_members`
+--
+
+CREATE TABLE `linkspot_members` (
+  `id` int(11) NOT NULL,
+  `member_code` varchar(20) DEFAULT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `id_number` varchar(30) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `package_type` enum('daily','weekly','monthly','quarterly','yearly') DEFAULT 'monthly',
+  `monthly_rate` decimal(10,2) NOT NULL,
+  `balance` decimal(10,2) DEFAULT 0.00,
+  `next_due_date` date DEFAULT NULL,
+  `station_address_id` int(11) DEFAULT NULL,
+  `station_code` varchar(10) DEFAULT NULL,
+  `desk_number` varchar(10) DEFAULT NULL,
+  `status` enum('active','inactive','suspended','pending') DEFAULT 'active',
+  `is_new` tinyint(1) DEFAULT 0,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `linkspot_members`
+--
+
+INSERT INTO `linkspot_members` (`id`, `member_code`, `full_name`, `email`, `phone`, `id_number`, `address`, `package_type`, `monthly_rate`, `balance`, `next_due_date`, `station_address_id`, `station_code`, `desk_number`, `status`, `is_new`, `notes`, `created_at`, `updated_at`) VALUES
+(2, 'LS2601001', 'Gilbert Takudzwa Mashawi', 'gidzaboy3054@gmail.com', '0781012420', '', NULL, 'monthly', 65.00, 0.00, '0000-00-00', 1, 'A', '1', 'active', 1, '0', '2026-01-26 06:00:07', '2026-01-26 06:00:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `linkspot_payments`
+--
+
+CREATE TABLE `linkspot_payments` (
+  `id` int(11) NOT NULL,
+  `payment_date` date NOT NULL,
+  `month_paid` varchar(50) NOT NULL,
+  `payer_name` varchar(100) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `station_address_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `linkspot_payments`
+--
+
+INSERT INTO `linkspot_payments` (`id`, `payment_date`, `month_paid`, `payer_name`, `amount`, `payment_method`, `description`, `created_at`, `station_address_id`) VALUES
+(2, '2026-01-21', 'January', 'tagwireyi', 20.00, 'Cash', 'weekly spaces', '2026-01-22 10:38:32', NULL),
+(3, '2026-01-26', 'january 2026', '0', 65.00, 'Cash', '0', '2026-01-26 11:45:28', 51);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `linkspot_station_addresses`
+--
+
+CREATE TABLE `linkspot_station_addresses` (
+  `id` int(11) NOT NULL,
+  `station_code` varchar(10) NOT NULL,
+  `desk_number` varchar(10) NOT NULL,
+  `status` enum('available','occupied','reserved','maintenance') DEFAULT 'available',
+  `current_user_id` int(11) DEFAULT NULL,
+  `current_user_name` varchar(100) DEFAULT NULL,
+  `occupation_start` datetime DEFAULT NULL,
+  `occupation_end` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `linkspot_station_addresses`
+--
+
+INSERT INTO `linkspot_station_addresses` (`id`, `station_code`, `desk_number`, `status`, `current_user_id`, `current_user_name`, `occupation_start`, `occupation_end`, `created_at`, `updated_at`) VALUES
+(1, 'A', '1', 'occupied', 0, 'Gilbert Takudzwa Mashawi', '2026-01-25 22:00:07', NULL, '2026-01-24 10:26:48', '2026-01-26 06:00:07'),
+(2, 'A', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(3, 'A', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(4, 'A', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(5, 'A', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(6, 'A', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(7, 'A', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(8, 'A', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(9, 'A', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(10, 'A', '10', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(11, 'B', '1', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(12, 'B', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(13, 'B', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(14, 'B', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(15, 'B', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(16, 'B', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(17, 'B', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(18, 'B', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(19, 'B', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(20, 'B', '10', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(21, 'C', '1', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(22, 'C', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(23, 'C', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(24, 'C', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(25, 'C', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(26, 'C', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(27, 'C', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(28, 'C', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(29, 'C', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(30, 'C', '10', 'occupied', 0, 'Gilbert Takudzwa Mashawi', '2026-01-25 12:10:13', NULL, '2026-01-24 10:26:48', '2026-01-25 20:10:13'),
+(31, 'D', '1', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(32, 'D', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(33, 'D', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(34, 'D', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(35, 'D', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(36, 'D', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(37, 'D', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(38, 'D', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(39, 'D', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(40, 'D', '10', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(41, 'E', '1', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(42, 'E', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(43, 'E', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(44, 'E', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(45, 'E', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(46, 'E', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(47, 'E', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(48, 'E', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(49, 'E', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(50, 'E', '10', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(51, 'F', '1', 'occupied', 0, 'Walter wale', '2026-01-26 03:45:28', NULL, '2026-01-24 10:26:48', '2026-01-26 11:45:28'),
+(52, 'F', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(53, 'F', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(54, 'F', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(55, 'F', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(56, 'F', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(57, 'F', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(58, 'F', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(59, 'F', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(60, 'F', '10', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(61, 'G', '1', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(62, 'G', '2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(63, 'G', '3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(64, 'G', '4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(65, 'G', '5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(66, 'G', '6', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(67, 'G', '7', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(68, 'G', '8', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(69, 'G', '9', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(70, 'G', '10', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mall_payments`
+--
+
+CREATE TABLE `mall_payments` (
+  `id` int(11) NOT NULL,
+  `payment_date` date NOT NULL,
+  `month_paid` varchar(50) NOT NULL,
+  `payer_name` varchar(100) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `shop_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meeting_rooms`
+--
+
+CREATE TABLE `meeting_rooms` (
+  `id` int(11) NOT NULL,
+  `room_name` varchar(100) NOT NULL,
+  `booked_by` varchar(100) NOT NULL,
+  `start_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_date` date NOT NULL,
+  `end_time` time NOT NULL,
+  `hours` decimal(5,2) NOT NULL,
+  `cost` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_rooms`
+--
+
+INSERT INTO `meeting_rooms` (`id`, `room_name`, `booked_by`, `start_date`, `start_time`, `end_date`, `end_time`, `hours`, `cost`, `created_at`) VALUES
+(14, 'Meeting Room A', 'Gilbert', '2026-01-26', '12:44:00', '2026-01-26', '12:49:00', 0.08, 10.00, '2026-01-26 10:45:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `notification_type` varchar(50) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `message` text NOT NULL,
+  `recipient_id` int(11) DEFAULT NULL,
+  `recipient_type` varchar(50) DEFAULT 'all',
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `notification_type`, `title`, `message`, `recipient_id`, `recipient_type`, `is_read`, `created_at`) VALUES
+(9, 'new_member', 'New Member Added', 'New member Gilbert Takudzwa Mashawi (LS2601001) has been added to LinkSpot Spaces', NULL, 'all', 0, '2026-01-26 06:00:07'),
+(10, 'new_tenant', 'New Tenant Added', 'New tenant Gilbert Takudzwa Mashawi (uz) has been added to Summarcity Mall. Shop: S1', NULL, 'all', 0, '2026-01-26 07:50:59'),
+(11, 'room_booking', 'New Room Booking', 'Board Room 1 booked by ghasajs from 2026-01-26T11:24 to 2026-01-26T12:24', NULL, 'all', 0, '2026-01-26 10:25:00'),
+(12, 'room_booking', 'New Room Booking', 'Meeting Room A booked by Gilbert from 2026-01-26T11:00 to 2026-01-26T12:00', NULL, 'all', 0, '2026-01-26 10:40:42'),
+(13, 'room_booking', 'New Room Booking', 'Meeting Room A booked by Gilbert from 2026-01-26T12:44 to 2026-01-26T12:49', NULL, 'all', 0, '2026-01-26 10:45:24'),
+(14, 'voucher_import', 'Vouchers Imported', '10 vouchers imported by Gilbert for batch: Import 2026-01-26 12:22:33', NULL, 'all', 0, '2026-01-26 11:22:41'),
+(15, 'voucher_import', 'Vouchers Imported', '10 vouchers imported by Gilbert for batch: Import 2026-01-26 12:35:30', NULL, 'all', 0, '2026-01-26 11:35:40'),
+(16, 'voucher_import', 'Vouchers Imported', '3 vouchers imported by Gilbert for batch: Import 2026-01-26 12:35:46', NULL, 'all', 0, '2026-01-26 11:35:56'),
+(17, 'voucher_import', 'Vouchers Imported', '6 vouchers imported by Gilbert for batch: Import 2026-01-26 12:36:00', NULL, 'all', 0, '2026-01-26 11:36:56'),
+(18, 'voucher_import', 'Vouchers Imported', '29 vouchers imported by Gilbert for batch: Import 2026-01-26 12:42:04', NULL, 'all', 0, '2026-01-26 11:42:22'),
+(19, 'linkspot_payment', 'New Payment Recorded', 'Payment of $65 from Walter wale for january 2026', NULL, 'all', 0, '2026-01-26 11:45:28');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reminders`
+--
+
+CREATE TABLE `reminders` (
+  `id` int(11) NOT NULL,
+  `reminder_type` varchar(50) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `message` text NOT NULL,
+  `target_id` int(11) DEFAULT NULL,
+  `target_type` varchar(50) DEFAULT NULL,
+  `reminder_time` datetime NOT NULL,
+  `status` enum('pending','sent','dismissed') DEFAULT 'pending',
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `summarcity_members`
+--
+
+CREATE TABLE `summarcity_members` (
+  `id` int(11) NOT NULL,
+  `member_code` varchar(20) DEFAULT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `id_number` varchar(30) DEFAULT NULL,
+  `business_name` varchar(100) DEFAULT NULL,
+  `business_type` varchar(50) DEFAULT NULL,
+  `shop_id` int(11) DEFAULT NULL,
+  `shop_number` varchar(20) DEFAULT NULL,
+  `rent_amount` decimal(10,2) NOT NULL,
+  `balance` decimal(10,2) DEFAULT 0.00,
+  `next_due_date` date DEFAULT NULL,
+  `status` enum('active','inactive','suspended','pending') DEFAULT 'active',
+  `is_new` tinyint(1) DEFAULT 0,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `summarcity_members`
+--
+
+INSERT INTO `summarcity_members` (`id`, `member_code`, `full_name`, `email`, `phone`, `id_number`, `business_name`, `business_type`, `shop_id`, `shop_number`, `rent_amount`, `balance`, `next_due_date`, `status`, `is_new`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 'SM2601001', 'Gilbert Takudzwa Mashawi', 'gidzaboy3054@gmail.com', '0781012420', '', 'uz', 'uz', 1, 'S1', 32.00, 32.00, '2026-02-26', 'active', 1, '', '2026-01-26 07:50:59', '2026-01-26 07:50:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `summarcity_shops`
+--
+
+CREATE TABLE `summarcity_shops` (
+  `id` int(11) NOT NULL,
+  `shop_number` varchar(20) NOT NULL,
+  `shop_name` varchar(100) DEFAULT NULL,
+  `status` enum('available','occupied','reserved','maintenance') DEFAULT 'available',
+  `current_tenant_id` int(11) DEFAULT NULL,
+  `current_tenant_name` varchar(100) DEFAULT NULL,
+  `rent_amount` decimal(10,2) DEFAULT NULL,
+  `next_due_date` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `summarcity_shops`
+--
+
+INSERT INTO `summarcity_shops` (`id`, `shop_number`, `shop_name`, `status`, `current_tenant_id`, `current_tenant_name`, `rent_amount`, `next_due_date`, `created_at`, `updated_at`) VALUES
+(1, 'S1', 'Shop 1', 'occupied', 0, 'uz', 32.00, '2026-02-26', '2026-01-24 10:26:48', '2026-01-26 07:50:59'),
+(2, 'S2', 'Shop 2', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(3, 'S3', 'Shop 3', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(4, 'S4', 'Shop 4', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48'),
+(5, 'S5', 'Shop 5', 'available', NULL, NULL, NULL, NULL, '2026-01-24 10:26:48', '2026-01-24 10:26:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tasks`
+--
+
+CREATE TABLE `tasks` (
+  `id` int(11) NOT NULL,
+  `task_date` date NOT NULL,
+  `task_time` time NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('pending','complete','halt') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tasks`
+--
+
+INSERT INTO `tasks` (`id`, `task_date`, `task_time`, `title`, `description`, `status`, `created_at`) VALUES
+(1, '2026-01-22', '07:50:00', 'Project Requirements', 'Project Requirements,,  and alternatives', 'pending', '2026-01-22 15:47:48'),
+(2, '2026-01-22', '07:50:00', 'install software', '', 'pending', '2026-01-22 15:48:03'),
+(3, '2026-01-22', '07:50:00', 'Visualize schematics', '', 'pending', '2026-01-22 15:48:16'),
+(4, '2026-01-22', '07:50:00', 'Check video', '', 'pending', '2026-01-22 15:48:29'),
+(5, '2026-01-22', '07:50:00', 'Inventory adding and system', '', 'pending', '2026-01-22 15:48:46'),
+(6, '2026-01-22', '07:50:00', 'Developed Linkspot vouchers system and Tasker', '', 'pending', '2026-01-22 15:49:18'),
+(7, '2026-01-22', '07:50:00', 'Fetching categories,, ie Adding/editing…', '', 'pending', '2026-01-22 15:49:48'),
+(8, '2026-01-22', '07:50:00', 'Suppliers api…  and  Cruds', '', 'pending', '2026-01-22 15:50:07'),
+(9, '2026-01-22', '07:50:00', 'Fetching a supplier  ', '', 'pending', '2026-01-22 15:50:17'),
+(10, '2026-01-22', '07:50:00', 'Add a supplier', '', 'pending', '2026-01-22 15:50:24'),
+(11, '2026-01-22', '07:50:00', 'Push to remote', '', 'pending', '2026-01-22 15:50:32'),
+(12, '2026-01-22', '07:50:00', 'Inventory type,, table', '', 'pending', '2026-01-22 15:50:41'),
+(13, '2026-01-22', '07:50:00', 'Fetching units', '', 'pending', '2026-01-22 15:50:49'),
+(14, '2026-01-22', '07:50:00', 'Adding /editing units ', '', 'pending', '2026-01-22 15:50:56');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(100) DEFAULT NULL,
+  `role` varchar(20) DEFAULT 'reception',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `role`, `created_at`) VALUES
+(1, 'gilbert', 'reception', 'Gilbert', 'reception', '2026-01-22 08:58:14'),
+(2, 'teddy', 'reception', 'Teddy', 'reception', '2026-01-22 08:58:14'),
+(3, 'walter', 'reception', 'Walter', 'reception', '2026-01-22 08:58:14'),
+(4, 'tafadzwa', 'reception', 'Tafadzwa', 'reception', '2026-01-22 08:58:14'),
+(5, 'admin', 'admin123', 'Administrator', 'admin', '2026-01-22 08:58:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vouchers`
+--
+
+CREATE TABLE `vouchers` (
+  `id` int(11) NOT NULL,
+  `batch_id` int(11) NOT NULL,
+  `voucher_code` varchar(11) NOT NULL,
+  `voucher_type_id` int(11) NOT NULL,
+  `status` enum('available','used','expired') DEFAULT 'available',
+  `used_date` datetime DEFAULT NULL,
+  `sale_id` int(11) DEFAULT NULL,
+  `station_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `vouchers`
+--
+
+INSERT INTO `vouchers` (`id`, `batch_id`, `voucher_code`, `voucher_type_id`, `status`, `used_date`, `sale_id`, `station_id`, `created_at`) VALUES
+(21, 3, 'KWTV7VbUYG6', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(22, 3, 'RAEUzxqUXzz', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(23, 3, 'rkzz4Sqt368', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(24, 3, 'xVsBiHVZrj7', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(25, 3, 'CPPzm5YqzSL', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(26, 3, 'ScZRU2dhY6L', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(27, 3, 'HEsC6xi6Rx6', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(28, 3, 'cDVntz4LssQ', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(29, 3, 'csFYzJt7xZT', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(30, 3, 'rnem7a7f5xs', 1, 'available', NULL, NULL, NULL, '2026-01-26 11:22:41'),
+(32, 5, 'nWyZKdthNhY', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(33, 5, 'PVG7CaMnYEV', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(34, 5, 'HNA3AJFhDJt', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(35, 5, 'wD2rKRJHM8z', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(36, 5, 'ibZ3nKayiY5', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(37, 5, 'x8Py8PvNsFH', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(38, 5, 'HK8wPite7Ld', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(39, 5, 'PktXUTuPFDk', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(40, 5, 'irRGZybS5J7', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(41, 5, 'AhPUmMZqXhj', 2, 'available', NULL, NULL, NULL, '2026-01-26 11:35:40'),
+(42, 6, '7MsQA6VWqTK', 3, 'available', NULL, NULL, NULL, '2026-01-26 11:35:56'),
+(43, 6, 'X8jvwvUaeMi', 3, 'available', NULL, NULL, NULL, '2026-01-26 11:35:56'),
+(44, 6, 'EnW24yt6TEc', 3, 'available', NULL, NULL, NULL, '2026-01-26 11:35:56'),
+(45, 7, 'XPf4xjUdeTD', 4, 'available', NULL, NULL, NULL, '2026-01-26 11:36:55'),
+(46, 7, 'uTAZBnjhrXW', 4, 'available', NULL, NULL, NULL, '2026-01-26 11:36:55'),
+(47, 7, 'GXupqGBRsNt', 4, 'available', NULL, NULL, NULL, '2026-01-26 11:36:56'),
+(48, 7, '7JR66rzanKE', 4, 'available', NULL, NULL, NULL, '2026-01-26 11:36:56'),
+(49, 7, '3GQQLfG5VD4', 4, 'available', NULL, NULL, NULL, '2026-01-26 11:36:56'),
+(50, 7, '2a5smnTZXRq', 4, 'available', NULL, NULL, NULL, '2026-01-26 11:36:56'),
+(51, 8, 'JHjWWixjAvW', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(52, 8, 'MwF5Vbp7dJj', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(53, 8, '27PTaZkhbbh', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(54, 8, '6KrnKeCUuTK', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(55, 8, 'HFEEQ8y2L5C', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(56, 8, '24PKbCiSVPt', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(57, 8, 'wCf2QwXXWQe', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(58, 8, 'K8WkmyCGiyw', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(59, 8, 'NL4TGZGCsjv', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(60, 8, 'LeaCXU7uLMd', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(61, 8, 'DTAKsRPZZc6', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(62, 8, 'Mihk7n7h3zB', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(63, 8, 'iKqjsfkrrXn', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(64, 8, 'qzVGhRPM87D', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(65, 8, 'ajKm5JG3bnc', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(66, 8, 'iUwJ7VzRqKp', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(67, 8, 'kRi77aEHWhy', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(68, 8, '3LuXk62JH8H', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(69, 8, 'QFGkE6DSNa6', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(70, 8, 'AJvX6wpjwXP', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(71, 8, 'cRDM57yPuV7', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(72, 8, 'Zj2ULRi8EYk', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(73, 8, 'MeJKqn43VhR', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(74, 8, 'ymbArd8SLuG', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(75, 8, 'ks62dQDGtw6', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(76, 8, '8NevyfZPmqt', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(77, 8, 'SXEZaDYfnEc', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(78, 8, 'ZVRNKVUTT24', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22'),
+(79, 8, 'RNfwAhP34zP', 5, 'available', NULL, NULL, NULL, '2026-01-26 11:42:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `voucher_batches`
+--
+
+CREATE TABLE `voucher_batches` (
+  `id` int(11) NOT NULL,
+  `batch_name` varchar(100) NOT NULL,
+  `import_date` date NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `total_vouchers` int(11) NOT NULL,
+  `voucher_type_id` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `voucher_batches`
+--
+
+INSERT INTO `voucher_batches` (`id`, `batch_name`, `import_date`, `file_name`, `total_vouchers`, `voucher_type_id`, `created_by`, `created_at`) VALUES
+(3, 'Import 2026-01-26 12:22:33', '2026-01-26', 'vouchers_zone1_roll10.csv', 10, 1, 1, '2026-01-26 11:22:41'),
+(5, 'Import 2026-01-26 12:35:30', '2026-01-26', 'vouchers_zone1_roll9 (1).csv', 10, 2, 1, '2026-01-26 11:35:40'),
+(6, 'Import 2026-01-26 12:35:46', '2026-01-26', 'vouchers_zone1_roll7.csv', 3, 3, 1, '2026-01-26 11:35:56'),
+(7, 'Import 2026-01-26 12:36:00', '2026-01-26', 'vouchers_zone1_roll12.csv', 6, 4, 1, '2026-01-26 11:36:55'),
+(8, 'Import 2026-01-26 12:42:04', '2026-01-26', 'vouchers_zone1_roll13.csv', 29, 5, 1, '2026-01-26 11:42:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `voucher_sales`
+--
+
+CREATE TABLE `voucher_sales` (
+  `id` int(11) NOT NULL,
+  `sale_date` date NOT NULL,
+  `sale_time` time NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `station_address_id` int(11) DEFAULT NULL,
+  `amount_received` decimal(10,2) DEFAULT NULL,
+  `change_amount` decimal(10,2) DEFAULT 0.00,
+  `customer_name` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `voucher_sales`
+--
+
+INSERT INTO `voucher_sales` (`id`, `sale_date`, `sale_time`, `total_amount`, `created_at`, `station_address_id`, `amount_received`, `change_amount`, `customer_name`) VALUES
+(3, '2026-01-22', '01:39:49', 1.00, '2026-01-22 09:39:49', NULL, NULL, 0.00, NULL),
+(4, '2026-01-22', '01:39:57', 4.00, '2026-01-22 09:39:57', NULL, NULL, 0.00, NULL),
+(5, '2026-01-22', '01:52:09', 1.00, '2026-01-22 09:52:09', NULL, NULL, 0.00, NULL),
+(6, '2026-01-22', '01:52:15', 1.00, '2026-01-22 09:52:15', NULL, NULL, 0.00, NULL),
+(7, '2026-01-22', '01:52:24', 5.00, '2026-01-22 09:52:24', NULL, NULL, 0.00, NULL),
+(8, '2026-01-22', '01:52:39', 2.00, '2026-01-22 09:52:39', NULL, NULL, 0.00, NULL),
+(9, '2026-01-22', '01:52:46', 1.00, '2026-01-22 09:52:46', NULL, NULL, 0.00, NULL),
+(10, '2026-01-22', '02:36:33', 1.00, '2026-01-22 10:36:33', NULL, NULL, 0.00, NULL),
+(11, '2026-01-22', '02:58:27', 1.00, '2026-01-22 10:58:27', NULL, NULL, 0.00, NULL),
+(12, '2026-01-22', '02:58:30', 1.00, '2026-01-22 10:58:30', NULL, NULL, 0.00, NULL),
+(13, '2026-01-22', '03:36:09', 1.00, '2026-01-22 11:36:09', NULL, NULL, 0.00, NULL),
+(14, '2026-01-22', '03:36:15', 1.00, '2026-01-22 11:36:15', NULL, NULL, 0.00, NULL),
+(15, '2026-01-22', '07:45:40', 2.00, '2026-01-22 15:45:40', NULL, NULL, 0.00, NULL),
+(16, '2026-01-22', '07:45:44', 1.00, '2026-01-22 15:45:44', NULL, NULL, 0.00, NULL),
+(17, '2026-01-22', '07:46:18', 1.00, '2026-01-22 15:46:18', NULL, NULL, 0.00, NULL),
+(18, '2026-01-22', '07:46:27', 1.00, '2026-01-22 15:46:27', NULL, NULL, 0.00, NULL),
+(19, '2026-01-22', '07:46:29', 1.00, '2026-01-22 15:46:29', NULL, NULL, 0.00, NULL),
+(20, '2026-01-22', '07:46:31', 1.00, '2026-01-22 15:46:31', NULL, NULL, 0.00, NULL),
+(21, '2026-01-22', '07:46:39', 1.00, '2026-01-22 15:46:39', NULL, NULL, 0.00, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `voucher_sale_items`
+--
+
+CREATE TABLE `voucher_sale_items` (
+  `id` int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `voucher_type_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unit_price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `voucher_sale_items`
+--
+
+INSERT INTO `voucher_sale_items` (`id`, `sale_id`, `voucher_type_id`, `quantity`, `unit_price`) VALUES
+(3, 3, 1, 1, 1.00),
+(4, 4, 4, 1, 4.00),
+(5, 5, 1, 1, 1.00),
+(6, 6, 1, 1, 1.00),
+(7, 7, 5, 1, 5.00),
+(8, 8, 2, 1, 2.00),
+(9, 9, 1, 1, 1.00),
+(10, 10, 1, 1, 1.00),
+(11, 11, 1, 1, 1.00),
+(12, 12, 1, 1, 1.00),
+(13, 13, 1, 1, 1.00),
+(14, 14, 1, 1, 1.00),
+(15, 15, 2, 1, 2.00),
+(16, 16, 1, 1, 1.00),
+(17, 17, 6, 1, 1.00),
+(18, 18, 1, 1, 1.00),
+(19, 19, 1, 1, 1.00),
+(20, 20, 1, 1, 1.00),
+(21, 21, 1, 1, 1.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `voucher_types`
+--
+
+CREATE TABLE `voucher_types` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `last_import_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `voucher_types`
+--
+
+INSERT INTO `voucher_types` (`id`, `name`, `price`, `is_active`, `last_import_date`) VALUES
+(1, '1 Hour', 1.00, 1, '2026-01-26 03:22:41'),
+(2, '2 Hours', 2.00, 1, '2026-01-26 03:35:40'),
+(3, '3 Hours', 3.00, 1, '2026-01-26 03:35:56'),
+(4, '4 Hours', 4.00, 1, '2026-01-26 03:36:56'),
+(5, '1 Day', 5.00, 1, '2026-01-26 03:42:22'),
+(6, 'Laptop', 1.00, 1, NULL),
+(7, 'Day Laptop', 2.00, 1, NULL);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `activity_date` (`activity_date`),
+  ADD KEY `activity_type` (`activity_type`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `customer_changes`
+--
+ALTER TABLE `customer_changes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `status` (`status`),
+  ADD KEY `created_date` (`created_date`);
+
+--
+-- Indexes for table `linkspot_members`
+--
+ALTER TABLE `linkspot_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `member_code` (`member_code`),
+  ADD KEY `status` (`status`),
+  ADD KEY `station_address_id` (`station_address_id`);
+
+--
+-- Indexes for table `linkspot_payments`
+--
+ALTER TABLE `linkspot_payments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_date` (`payment_date`),
+  ADD KEY `station_address_id` (`station_address_id`);
+
+--
+-- Indexes for table `linkspot_station_addresses`
+--
+ALTER TABLE `linkspot_station_addresses`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_station` (`station_code`,`desk_number`),
+  ADD KEY `status` (`status`);
+
+--
+-- Indexes for table `mall_payments`
+--
+ALTER TABLE `mall_payments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_date` (`payment_date`),
+  ADD KEY `shop_id` (`shop_id`);
+
+--
+-- Indexes for table `meeting_rooms`
+--
+ALTER TABLE `meeting_rooms`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `start_date` (`start_date`),
+  ADD KEY `booked_by` (`booked_by`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `recipient_type` (`recipient_type`),
+  ADD KEY `is_read` (`is_read`),
+  ADD KEY `recipient_id` (`recipient_id`);
+
+--
+-- Indexes for table `reminders`
+--
+ALTER TABLE `reminders`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reminder_time` (`reminder_time`),
+  ADD KEY `status` (`status`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indexes for table `summarcity_members`
+--
+ALTER TABLE `summarcity_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `member_code` (`member_code`),
+  ADD KEY `status` (`status`),
+  ADD KEY `shop_id` (`shop_id`);
+
+--
+-- Indexes for table `summarcity_shops`
+--
+ALTER TABLE `summarcity_shops`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `shop_number` (`shop_number`),
+  ADD KEY `status` (`status`);
+
+--
+-- Indexes for table `tasks`
+--
+ALTER TABLE `tasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `task_date` (`task_date`),
+  ADD KEY `status` (`status`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indexes for table `vouchers`
+--
+ALTER TABLE `vouchers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `voucher_code` (`voucher_code`),
+  ADD KEY `batch_id` (`batch_id`),
+  ADD KEY `voucher_type_id` (`voucher_type_id`),
+  ADD KEY `status` (`status`),
+  ADD KEY `sale_id` (`sale_id`),
+  ADD KEY `station_id` (`station_id`);
+
+--
+-- Indexes for table `voucher_batches`
+--
+ALTER TABLE `voucher_batches`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `voucher_type_id` (`voucher_type_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indexes for table `voucher_sales`
+--
+ALTER TABLE `voucher_sales`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sale_date` (`sale_date`),
+  ADD KEY `station_address_id` (`station_address_id`);
+
+--
+-- Indexes for table `voucher_sale_items`
+--
+ALTER TABLE `voucher_sale_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `voucher_type_id` (`voucher_type_id`),
+  ADD KEY `sale_id` (`sale_id`);
+
+--
+-- Indexes for table `voucher_types`
+--
+ALTER TABLE `voucher_types`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `customer_changes`
+--
+ALTER TABLE `customer_changes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `linkspot_members`
+--
+ALTER TABLE `linkspot_members`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `linkspot_payments`
+--
+ALTER TABLE `linkspot_payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `linkspot_station_addresses`
+--
+ALTER TABLE `linkspot_station_addresses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+
+--
+-- AUTO_INCREMENT for table `mall_payments`
+--
+ALTER TABLE `mall_payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `meeting_rooms`
+--
+ALTER TABLE `meeting_rooms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `reminders`
+--
+ALTER TABLE `reminders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `summarcity_members`
+--
+ALTER TABLE `summarcity_members`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `summarcity_shops`
+--
+ALTER TABLE `summarcity_shops`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `tasks`
+--
+ALTER TABLE `tasks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `vouchers`
+--
+ALTER TABLE `vouchers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+
+--
+-- AUTO_INCREMENT for table `voucher_batches`
+--
+ALTER TABLE `voucher_batches`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `voucher_sales`
+--
+ALTER TABLE `voucher_sales`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `voucher_sale_items`
+--
+ALTER TABLE `voucher_sale_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `voucher_types`
+--
+ALTER TABLE `voucher_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD CONSTRAINT `activity_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `linkspot_members`
+--
+ALTER TABLE `linkspot_members`
+  ADD CONSTRAINT `linkspot_members_ibfk_1` FOREIGN KEY (`station_address_id`) REFERENCES `linkspot_station_addresses` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `linkspot_payments`
+--
+ALTER TABLE `linkspot_payments`
+  ADD CONSTRAINT `linkspot_payments_ibfk_1` FOREIGN KEY (`station_address_id`) REFERENCES `linkspot_station_addresses` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `mall_payments`
+--
+ALTER TABLE `mall_payments`
+  ADD CONSTRAINT `mall_payments_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `summarcity_shops` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `reminders`
+--
+ALTER TABLE `reminders`
+  ADD CONSTRAINT `reminders_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `summarcity_members`
+--
+ALTER TABLE `summarcity_members`
+  ADD CONSTRAINT `summarcity_members_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `summarcity_shops` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `vouchers`
+--
+ALTER TABLE `vouchers`
+  ADD CONSTRAINT `vouchers_ibfk_1` FOREIGN KEY (`batch_id`) REFERENCES `voucher_batches` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `vouchers_ibfk_2` FOREIGN KEY (`voucher_type_id`) REFERENCES `voucher_types` (`id`),
+  ADD CONSTRAINT `vouchers_ibfk_3` FOREIGN KEY (`sale_id`) REFERENCES `voucher_sales` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `vouchers_ibfk_4` FOREIGN KEY (`station_id`) REFERENCES `linkspot_station_addresses` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `voucher_batches`
+--
+ALTER TABLE `voucher_batches`
+  ADD CONSTRAINT `voucher_batches_ibfk_1` FOREIGN KEY (`voucher_type_id`) REFERENCES `voucher_types` (`id`),
+  ADD CONSTRAINT `voucher_batches_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `voucher_sales`
+--
+ALTER TABLE `voucher_sales`
+  ADD CONSTRAINT `voucher_sales_ibfk_1` FOREIGN KEY (`station_address_id`) REFERENCES `linkspot_station_addresses` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `voucher_sale_items`
+--
+ALTER TABLE `voucher_sale_items`
+  ADD CONSTRAINT `voucher_sale_items_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `voucher_sales` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `voucher_sale_items_ibfk_2` FOREIGN KEY (`voucher_type_id`) REFERENCES `voucher_types` (`id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+adding to the following vouchers.php
+
+"<?php
+// vouchers.php - Internet Vouchers Management
+require_once 'config.php';
+requireLogin();
+
+$action = $_GET['action'] ?? 'sell';
+$db = getDB();
+$user = getCurrentUser();
+
+// Check if vouchers need to be imported
+function checkVouchersAvailable() {
+    $db = getDB();
+    $stmt = $db->prepare("SELECT COUNT(*) as count FROM vouchers WHERE status = 'available'");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['count'] > 0;
+}
+
+$vouchersAvailable = checkVouchersAvailable();
+
+// Handle AJAX requests
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
+    header('Content-Type: application/json');
+    
+    switch ($_POST['action']) {
+        case 'get_voucher_types':
+            $stmt = $db->prepare("SELECT vt.*, 
+                (SELECT COUNT(*) FROM vouchers v WHERE v.voucher_type_id = vt.id AND v.status = 'available') as available_count
+                FROM voucher_types vt WHERE vt.is_active = 1 ORDER BY vt.price");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $vouchers = [];
+            while ($row = $result->fetch_assoc()) {
+                $vouchers[] = $row;
+            }
+            echo json_encode(['success' => true, 'data' => $vouchers]);
+            break;
+            
+        case 'get_available_stations':
+            $stations = getAvailableStationAddresses();
+            echo json_encode(['success' => true, 'data' => $stations]);
+            break;
+            
+        case 'process_sale':
+            if (!$vouchersAvailable) {
+                echo json_encode(['success' => false, 'message' => 'No vouchers available. Please import vouchers first.']);
+                exit;
+            }
+            
+            $items = json_decode($_POST['items'], true);
+            $customerName = $_POST['customer_name'] ?? '';
+            $amountReceived = floatval($_POST['amount_received']);
+            $stationId = intval($_POST['station_id']);
+            $changeAmount = floatval($_POST['change_amount']);
+            
+            if (empty($items)) {
+                echo json_encode(['success' => false, 'message' => 'Please select at least one voucher']);
+                exit;
+            }
+            
+            $db->begin_transaction();
+            
+            try {
+                // Calculate total and check voucher availability
+                $total = 0;
+                $usedVoucherIds = [];
+                
+                foreach ($items as $item) {
+                    $itemTotal = $item['price'] * $item['quantity'];
+                    $total += $itemTotal;
+                    
+                    // Skip Laptop voucher type (ID 6 or 7) as they don't need voucher codes
+                    if (in_array($item['id'], [6, 7])) {
+                        continue;
+                    }
+                    
+                    // Get available vouchers for this type
+                    $voucherTypeId = (int)$item['id'];
+                    $limit = (int)$item['quantity'];
+                    $stmt = $db->prepare("SELECT id, voucher_code FROM vouchers WHERE voucher_type_id = ? AND status = 'available' LIMIT ?");
+                    $stmt->bind_param("ii", $voucherTypeId, $limit);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    
+                    $vouchersForItem = [];
+                    while ($voucher = $result->fetch_assoc()) {
+                        $vouchersForItem[] = $voucher;
+                        $usedVoucherIds[] = $voucher['id'];
+                    }
+                    
+                    if (count($vouchersForItem) < $item['quantity']) {
+                        throw new Exception("Not enough vouchers available for '{$item['name']}'. Required: {$item['quantity']}, Available: " . count($vouchersForItem));
+                    }
+                }
+                
+                if ($amountReceived < $total) {
+                    throw new Exception('Amount received is less than total amount');
+                }
+                
+                // Create voucher sale
+                $stmt = $db->prepare("INSERT INTO voucher_sales (sale_date, sale_time, total_amount, amount_received, change_amount, customer_name, station_address_id) VALUES (CURDATE(), CURTIME(), ?, ?, ?, ?, ?)");
+                $stmt->bind_param("ddddsi", $total, $amountReceived, $changeAmount, $customerName, $stationId);
+                $stmt->execute();
+                $saleId = $db->insert_id;
+                
+                // Insert sale items and mark vouchers as used
+                $voucherCodes = [];
+                $itemIndex = 0;
+                
+                foreach ($items as $item) {
+                    // Extract values to variables
+                    $voucherTypeId = (int)$item['id'];
+                    $quantity = (int)$item['quantity'];
+                    $unitPrice = (float)$item['price'];
+                    
+                    // Insert sale item
+                    $stmt = $db->prepare("INSERT INTO voucher_sale_items (sale_id, voucher_type_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("iidd", $saleId, $voucherTypeId, $quantity, $unitPrice);
+                    $stmt->execute();
+                    
+                    // Skip Laptop voucher type
+                    if (in_array($item['id'], [6, 7])) {
+                        continue;
+                    }
+                    
+                    // Mark vouchers as used
+                    for ($i = 0; $i < $item['quantity']; $i++) {
+                        if (isset($usedVoucherIds[$itemIndex])) {
+                            $voucherId = $usedVoucherIds[$itemIndex];
+                            $stmt = $db->prepare("UPDATE vouchers SET status = 'used', used_date = NOW(), sale_id = ?, station_id = ? WHERE id = ?");
+                            $stationIdForVoucher = $stationId > 0 ? $stationId : null;
+                            $stmt->bind_param("iii", $saleId, $stationIdForVoucher, $voucherId);
+                            $stmt->execute();
+                            
+                            // Get voucher code for receipt
+                            $stmt2 = $db->prepare("SELECT voucher_code FROM vouchers WHERE id = ?");
+                            $stmt2->bind_param("i", $voucherId);
+                            $stmt2->execute();
+                            $result2 = $stmt2->get_result();
+                            $voucherRow = $result2->fetch_assoc();
+                            $voucherCodes[] = $voucherRow['voucher_code'];
+                            
+                            $itemIndex++;
+                        }
+                    }
+                }
+                
+                // Update station status if assigned
+                if ($stationId > 0) {
+                    $stmt = $db->prepare("UPDATE linkspot_station_addresses SET status = 'occupied', occupation_start = NOW(), current_user_id = NULL, current_user_name = ? WHERE id = ?");
+                    $userName = !empty($customerName) ? $customerName : 'Walk-in Customer';
+                    $stationIdInt = (int)$stationId;
+                    $stmt->bind_param("si", $userName, $stationIdInt);
+                    $stmt->execute();
+                    
+                    // Create reminder for voucher expiration
+                    $voucherDuration = 60; // Default 1 hour in minutes
+                    if (strpos($items[0]['name'], 'Hour') !== false) {
+                        $hours = intval($items[0]['name']);
+                        $voucherDuration = $hours * 60;
+                    } elseif (strpos($items[0]['name'], 'Day') !== false) {
+                        $voucherDuration = 24 * 60;
+                    }
+                    
+                    $reminderTime = date('Y-m-d H:i:s', strtotime("+{$voucherDuration} minutes"));
+                    $stmt = $db->prepare("INSERT INTO reminders (reminder_type, title, message, target_id, target_type, reminder_time, status, created_by) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)");
+                    $reminderTitle = "Voucher Expiration - Station " . $stationId;
+                    $reminderMsg = "Voucher for station ID {$stationId} will expire at {$reminderTime}";
+                    $reminderType = 'voucher_expiry';
+                    $targetType = 'station';
+                    $targetId = (int)$stationId;
+                    $createdById = (int)$user['id'];
+                    $stmt->bind_param("sssissi", $reminderType, $reminderTitle, $reminderMsg, $targetId, $targetType, $reminderTime, $createdById);
+                    $stmt->execute();
+                }
+                
+                // Record change if any
+                if ($changeAmount > 0 && !empty($customerName)) {
+                    $stmt = $db->prepare("INSERT INTO customer_changes (customer_name, amount, phone_number, notes, status, given_by) VALUES (?, ?, ?, ?, 'given', ?)");
+                    $notes = "Change from voucher sale #{$saleId}";
+                    $phone = '';
+                    $givenBy = $user['username'];
+                    $stmt->bind_param("sdsss", $customerName, $changeAmount, $phone, $notes, $givenBy);
+                    $stmt->execute();
+                }
+                
+                // Add activity log
+                addActivityLog('Internet Vouchers', "Sold voucher(s) for $" . number_format($total, 2), "Customer: {$customerName}, Change: $" . number_format($changeAmount, 2));
+                
+                // Send notification for new sale
+                sendNotification('voucher_sale', 'New Voucher Sale', "Voucher sale #{$saleId} for $" . number_format($total, 2) . " processed by {$user['full_name']}");
+                
+                $db->commit();
+                
+                // Prepare voucher codes for display
+                $voucherCodesStr = implode(', ', $voucherCodes);
+                $message = 'Voucher sale processed successfully!';
+                if (!empty($voucherCodes)) {
+                    $message .= ' Voucher Codes: ' . $voucherCodesStr;
+                }
+                
+                echo json_encode([
+                    'success' => true, 
+                    'message' => $message, 
+                    'sale_id' => $saleId,
+                    'voucher_codes' => $voucherCodes
+                ]);
+            } catch (Exception $e) {
+                $db->rollback();
+                echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            }
+            break;
+            
+        case 'get_active_sessions':
+            $occupied = getOccupiedSpacesWithRemainingTime();
+            echo json_encode(['success' => true, 'data' => $occupied]);
+            break;
+            
+        case 'release_station':
+            $stationId = intval($_POST['station_id']);
+            
+            $stmt = $db->prepare("UPDATE linkspot_station_addresses SET status = 'available', occupation_start = NULL, occupation_end = NULL, current_user_id = NULL, current_user_name = NULL WHERE id = ?");
+            $stmt->bind_param("i", $stationId);
+            
+            if ($stmt->execute()) {
+                addActivityLog('Internet Vouchers', "Released station ID {$stationId}", "Released by {$user['full_name']}");
+                echo json_encode(['success' => true, 'message' => 'Station released successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to release station']);
+            }
+            break;
+            
+        case 'check_voucher_availability':
+            $voucherTypeId = intval($_POST['voucher_type_id']);
+            $stmt = $db->prepare("SELECT COUNT(*) as count FROM vouchers WHERE voucher_type_id = ? AND status = 'available'");
+            $stmt->bind_param("i", $voucherTypeId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            echo json_encode(['success' => true, 'count' => $row['count']]);
+            break;
+    }
+    exit;
+}
+
+// Handle CSV import
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['import_vouchers'])) {
+    $voucherTypeId = intval($_POST['voucher_type_id']);
+    $batchName = $_POST['batch_name'] ?? 'Import ' . date('Y-m-d H:i:s');
+    
+    if (!isset($_FILES['voucher_file']) || $_FILES['voucher_file']['error'] !== UPLOAD_ERR_OK) {
+        $_SESSION['import_error'] = 'Please upload a valid file.';
+        header('Location: vouchers.php?action=import');
+        exit;
+    }
+    
+    $tmpFile = $_FILES['voucher_file']['tmp_name'];
+
+    if (!is_uploaded_file($tmpFile)) {
+        $_SESSION['import_error'] = 'Invalid upload.';
+        header('Location: vouchers.php?action=import');
+        exit;
+    }
+
+    $lines = file($tmpFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+    $vouchers = [];
+    foreach ($lines as $line) {
+        $line = trim($line);
+        
+        // Skip comments
+        if ($line === '' || str_starts_with($line, '#')) {
+            continue;
+        }
+
+        // Remove quotes
+        $value = str_replace('"', '', $line);
+
+        // Keep only 11-character vouchers
+        if (strlen($value) === 11) {
+            $vouchers[] = $value;
+        }
+    }
+
+    // Remove duplicates
+    $vouchers = array_values(array_unique($vouchers));
+    
+    if (empty($vouchers)) {
+        $_SESSION['import_error'] = 'No valid 11-character voucher codes found in the file.';
+        header('Location: vouchers.php?action=import');
+        exit;
+    }
+    
+    $db->begin_transaction();
+    
+    try {
+        // Create batch record
+        $stmt = $db->prepare("INSERT INTO voucher_batches (batch_name, import_date, file_name, total_vouchers, voucher_type_id, created_by) VALUES (?, CURDATE(), ?, ?, ?, ?)");
+        $fileName = $_FILES['voucher_file']['name'];
+        $totalVouchers = count($vouchers);
+        $createdById = (int)$user['id'];
+        $stmt->bind_param("ssiii", $batchName, $fileName, $totalVouchers, $voucherTypeId, $createdById);
+        $stmt->execute();
+        $batchId = $db->insert_id;
+        
+        // Insert vouchers
+        $stmt = $db->prepare("INSERT INTO vouchers (batch_id, voucher_code, voucher_type_id, status) VALUES (?, ?, ?, 'available')");
+        
+        foreach ($vouchers as $voucherCode) {
+            $stmt->bind_param("isi", $batchId, $voucherCode, $voucherTypeId);
+            $stmt->execute();
+        }
+        
+        // Update voucher type with count
+        $stmt = $db->prepare("UPDATE voucher_types SET last_import_date = NOW() WHERE id = ?");
+        $stmt->bind_param("i", $voucherTypeId);
+        $stmt->execute();
+        
+        $db->commit();
+        
+        addActivityLog('Vouchers Import', "Imported " . count($vouchers) . " vouchers for batch: {$batchName}", "Voucher Type ID: {$voucherTypeId}");
+        sendNotification('voucher_import', 'Vouchers Imported', count($vouchers) . " vouchers imported by {$user['full_name']} for batch: {$batchName}");
+        
+        $_SESSION['import_success'] = 'Successfully imported ' . count($vouchers) . ' vouchers.';
+        header('Location: vouchers.php');
+        exit;
+        
+    } catch (Exception $e) {
+        $db->rollback();
+        $_SESSION['import_error'] = 'Error importing vouchers: ' . $e->getMessage();
+        header('Location: vouchers.php?action=import');
+        exit;
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo SITE_NAME; ?> - Internet Vouchers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: <?php echo SITE_THEME_COLOR; ?>;
+            --secondary: <?php echo SITE_SECONDARY_COLOR; ?>;
+            --accent: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-page {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--secondary);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background: rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sidebar-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .sidebar-header h3 {
+            font-size: 18px;
+            margin: 0;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            list-style: none;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--primary);
+        }
+        
+        .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--primary);
+        }
+        
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-dropdown .nav-link {
+            position: relative;
+        }
+        
+        .nav-dropdown .nav-link:after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+        
+        .nav-dropdown.active .nav-link:after {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            padding-left: 20px;
+            background: rgba(0,0,0,0.2);
+            display: none;
+        }
+        
+        .nav-dropdown.active .dropdown-menu {
+            display: block;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+        
+        .top-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .page-title h1 {
+            font-size: 24px;
+            color: var(--secondary);
+            margin: 0;
+        }
+        
+        .page-title p {
+            color: #6c757d;
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-badge .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            color: var(--secondary);
+            margin: 0;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: var(--primary);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        /* Voucher Grid */
+        .voucher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .voucher-card {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .voucher-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .voucher-card.selected {
+            border-color: var(--primary);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .voucher-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .voucher-name {
+            font-weight: 500;
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .voucher-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .voucher-count {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        
+        .voucher-count.warning {
+            color: #ffc107;
+        }
+        
+        .voucher-count.danger {
+            color: #dc3545;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-lg {
+            padding: 12px 25px;
+            font-size: 16px;
+        }
+        
+        /* Summary Box */
+        .summary-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        /* Station Grid */
+        .station-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .station-card {
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .station-card.available {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .station-card.occupied {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            cursor: not-allowed;
+        }
+        
+        .station-card.selected {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--secondary);
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .voucher-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .station-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-page">
+        <?php include 'header.php'; ?>
+        
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1><i class="fas fa-wifi"></i> Internet Vouchers</h1>
+                    <p>Manage internet voucher sales and active sessions</p>
+                </div>
+                <div class="user-menu">
+                    <div class="notification-badge">
+                        <i class="fas fa-bell"></i>
+                        <?php $unread = getUnreadNotificationsCount(); ?>
+                        <?php if ($unread > 0): ?>
+                        <span class="badge"><?php echo $unread; ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <?php echo strtoupper(substr($_SESSION['full_name'], 0, 1)); ?>
+                        </div>
+                        <div>
+                            <div style="font-weight: 500;"><?php echo $_SESSION['full_name']; ?></div>
+                            <div style="font-size: 12px; color: #6c757d;"><?php echo ucfirst($_SESSION['role']); ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab <?php echo $action === 'sell' ? 'active' : ''; ?>" onclick="switchTab('sell')">
+                    Sell Vouchers
+                </div>
+                <div class="tab <?php echo $action === 'import' ? 'active' : ''; ?>" onclick="switchTab('import')">
+                    Import Vouchers
+                </div>
+                <div class="tab <?php echo $action === 'history' ? 'active' : ''; ?>" onclick="switchTab('history')">
+                    Sales History
+                </div>
+                <div class="tab <?php echo $action === 'active' ? 'active' : ''; ?>" onclick="switchTab('active')">
+                    Active Sessions
+                </div>
+            </div>
+            
+            <?php if (!$vouchersAvailable && $action === 'sell'): ?>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <strong>No vouchers available!</strong> Please import vouchers before selling.
+                <a href="vouchers.php?action=import" class="btn btn-sm btn-warning" style="margin-left: 10px;">
+                    <i class="fas fa-file-import"></i> Import Now
+                </a>
+            </div>
+            <?php endif; ?>
+            
+            <?php if (isset($_SESSION['import_success'])): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <?php echo $_SESSION['import_success']; ?>
+                <?php unset($_SESSION['import_success']); ?>
+            </div>
+            <?php endif; ?>
+            
+            <?php if (isset($_SESSION['import_error'])): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <?php echo $_SESSION['import_error']; ?>
+                <?php unset($_SESSION['import_error']); ?>
+            </div>
+            <?php endif; ?>
+            
+            <div id="tab-sell" class="tab-content" style="<?php echo $action === 'sell' ? 'display: block;' : 'display: none;'; ?>">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sell Internet Vouchers</h3>
+                    </div>
+                    
+                    <div class="alert" id="alertMessage" style="display: none;"></div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Customer Name (Optional)</label>
+                        <input type="text" id="customerName" class="form-control" placeholder="Enter customer name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Select Voucher Type</label>
+                        <div class="voucher-grid" id="voucherGrid">
+                            <!-- Vouchers will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Assign Station (Optional)</label>
+                        <div class="station-grid" id="stationGrid">
+                            <!-- Stations will be loaded here -->
+                        </div>
+                        <small class="text-muted">Select an available station to assign to customer</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Total Amount</label>
+                            <input type="text" id="totalAmount" class="form-control" readonly value="$0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Amount Received</label>
+                            <input type="number" id="amountReceived" class="form-control" placeholder="0.00" step="0.01" min="0" oninput="calculateChange()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Change</label>
+                            <input type="text" id="changeAmount" class="form-control" readonly value="$0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="summary-box">
+                        <h4>Selected Items</h4>
+                        <div id="selectedItems">No items selected</div>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-lg" onclick="processSale()" style="margin-top: 20px; width: 100%;" <?php echo !$vouchersAvailable ? 'disabled' : ''; ?>>
+                        <i class="fas fa-cash-register"></i> Process Sale
+                    </button>
+                </div>
+            </div>
+            
+            <div id="tab-import" class="tab-content" style="<?php echo $action === 'import' ? 'display: block;' : 'display: none;'; ?>">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Import Vouchers</h3>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Instructions:</strong> Upload a CSV or text file containing 11-character voucher codes. 
+                        Each code should be on a separate line. The system will automatically extract only valid 11-character codes.
+                    </div>
+                    
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label class="form-label">Batch Name</label>
+                            <input type="text" name="batch_name" class="form-control" placeholder="e.g., January 2026 Vouchers" value="Import <?php echo date('Y-m-d H:i:s'); ?>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Voucher Type</label>
+                            <select name="voucher_type_id" class="form-control" required>
+                                <option value="">-- Select Voucher Type --</option>
+                                <?php
+                                $stmt = $db->prepare("SELECT * FROM voucher_types WHERE is_active = 1 ORDER BY price");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                while ($row = $result->fetch_assoc()): ?>
+                                    <option value="<?php echo $row['id']; ?>">
+                                        <?php echo $row['name']; ?> - $<?php echo $row['price']; ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Voucher File (CSV or Text)</label>
+                            <input type="file" name="voucher_file" class="form-control" accept=".csv,.txt" required>
+                            <small class="text-muted">File should contain one 11-character voucher code per line</small>
+                        </div>
+                        
+                        <button type="submit" name="import_vouchers" class="btn btn-primary btn-lg" style="margin-top: 20px; width: 100%;">
+                            <i class="fas fa-file-import"></i> Import Vouchers
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Available Voucher Inventory</h3>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Voucher Type</th>
+                                    <th>Price</th>
+                                    <th>Available</th>
+                                    <th>Used</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $stmt = $db->prepare("SELECT 
+                                    vt.name,
+                                    vt.price,
+                                    COUNT(CASE WHEN v.status = 'available' THEN 1 END) as available_count,
+                                    COUNT(CASE WHEN v.status = 'used' THEN 1 END) as used_count,
+                                    COUNT(*) as total_count
+                                    FROM voucher_types vt
+                                    LEFT JOIN vouchers v ON vt.id = v.voucher_type_id
+                                    WHERE vt.is_active = 1
+                                    GROUP BY vt.id
+                                    ORDER BY vt.price");
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                
+                                if ($result->num_rows === 0): ?>
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: #6c757d;">
+                                            No vouchers imported yet.
+                                        </td>
+                                    </tr>
+                                <?php else:
+                                    while ($row = $result->fetch_assoc()): ?>
+                                        <tr>
+                                            <td><?php echo $row['name']; ?></td>
+                                            <td>$<?php echo $row['price']; ?></td>
+                                            <td>
+                                                <span class="badge <?php echo $row['available_count'] == 0 ? 'badge-danger' : 'badge-success'; ?>">
+                                                    <?php echo $row['available_count']; ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-info"><?php echo $row['used_count']; ?></span>
+                                            </td>
+                                            <td><?php echo $row['total_count']; ?></td>
+                                        </tr>
+                                    <?php endwhile;
+                                endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tab-history" class="tab-content" style="<?php echo $action === 'history' ? 'display: block;' : 'display: none;'; ?>">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Sales History</h3>
+                        <div>
+                            <input type="date" id="historyDate" class="form-control" style="width: auto; display: inline-block;">
+                            <button class="btn btn-primary btn-sm" onclick="loadHistory()">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table" id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date/Time</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Voucher Codes</th>
+                                    <th>Station</th>
+                                    <th>Total</th>
+                                    <th>Received</th>
+                                    <th>Change</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- History will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tab-active" class="tab-content" style="<?php echo $action === 'active' ? 'display: block;' : 'display: none;'; ?>">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Active Sessions</h3>
+                        <button class="btn btn-primary btn-sm" onclick="loadActiveSessions()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table" id="activeSessionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Station</th>
+                                    <th>Customer</th>
+                                    <th>Voucher Type</th>
+                                    <th>Start Time</th>
+                                    <th>Remaining Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activeSessionsBody">
+                                <!-- Active sessions will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedVouchers = [];
+        let selectedStation = null;
+        let availableStations = [];
+        let voucherTypes = [];
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVouchers();
+            loadStations();
+            loadHistory();
+            if ('<?php echo $action; ?>' === 'active') {
+                loadActiveSessions();
+            }
+        });
+        
+        // Switch tabs
+        function switchTab(tab) {
+            window.location.href = 'vouchers.php?action=' + tab;
+        }
+        
+        // Load voucher types
+        function loadVouchers() {
+            fetch('vouchers.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'ajax=true&action=get_voucher_types'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    voucherTypes = data.data;
+                    const grid = document.getElementById('voucherGrid');
+                    grid.innerHTML = '';
+                    
+                    data.data.forEach(voucher => {
+                        const card = document.createElement('div');
+                        card.className = 'voucher-card';
+                        if (voucher.available_count <= 0 && ![6, 7].includes(voucher.id)) {
+                            card.classList.add('disabled');
+                        }
+                        card.dataset.id = voucher.id;
+                        card.innerHTML = `
+                            <div class="voucher-name">${voucher.name}</div>
+                            <div class="voucher-price">$${parseFloat(voucher.price).toFixed(2)}</div>
+                            <div class="voucher-count ${voucher.available_count <= 10 ? 'danger' : voucher.available_count <= 50 ? 'warning' : ''}">
+                                ${voucher.available_count} available
+                            </div>
+                        `;
+                        
+                        if (!(voucher.available_count <= 0 && ![6, 7].includes(voucher.id))) {
+                            card.onclick = () => selectVoucher(voucher.id, voucher.name, voucher.price, voucher.available_count);
+                        }
+                        
+                        grid.appendChild(card);
+                    });
+                }
+            });
+        }
+        
+        // Load available stations
+        function loadStations() {
+            fetch('vouchers.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'ajax=true&action=get_available_stations'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    availableStations = data.data;
+                    const grid = document.getElementById('stationGrid');
+                    grid.innerHTML = '';
+                    
+                    // Group stations by code
+                    const grouped = {};
+                    data.data.forEach(station => {
+                        if (!grouped[station.station_code]) {
+                            grouped[station.station_code] = [];
+                        }
+                        grouped[station.station_code].push(station);
+                    });
+                    
+                    // Display stations
+                    for (const [code, stations] of Object.entries(grouped)) {
+                        stations.forEach(station => {
+                            const card = document.createElement('div');
+                            card.className = 'station-card available';
+                            card.dataset.id = station.id;
+                            card.innerHTML = `${code}${station.desk_number}`;
+                            card.onclick = () => selectStation(station.id);
+                            grid.appendChild(card);
+                        });
+                    }
+                }
+            });
+        }
+        
+        // Select voucher
+        function selectVoucher(id, name, price, availableCount) {
+            // Skip laptop vouchers (no voucher codes needed)
+            if ([6, 7].includes(id)) {
+                // Laptop vouchers don't need actual voucher codes
+                const existingIndex = selectedVouchers.findIndex(v => v.id === id);
+                
+                if (existingIndex === -1) {
+                    selectedVouchers.push({
+                        id: id,
+                        name: name,
+                        price: parseFloat(price),
+                        quantity: 1,
+                        needsVoucher: false
+                    });
+                } else {
+                    selectedVouchers[existingIndex].quantity++;
+                }
+                
+                updateSelection();
+                return;
+            }
+            
+            // Check availability for regular vouchers
+            if (availableCount <= 0) {
+                showAlert(`No vouchers available for "${name}". Please import more vouchers.`, 'danger');
+                return;
+            }
+            
+            // Check if we have enough for this selection
+            const existingIndex = selectedVouchers.findIndex(v => v.id === id);
+            const currentQuantity = existingIndex >= 0 ? selectedVouchers[existingIndex].quantity : 0;
+            
+            if (currentQuantity + 1 > availableCount) {
+                showAlert(`Not enough vouchers available for "${name}". Only ${availableCount} remaining.`, 'danger');
+                return;
+            }
+            
+            if (existingIndex === -1) {
+                selectedVouchers.push({
+                    id: id,
+                    name: name,
+                    price: parseFloat(price),
+                    quantity: 1,
+                    needsVoucher: true
+                });
+            } else {
+                selectedVouchers[existingIndex].quantity++;
+            }
+            
+            updateSelection();
+        }
+        
+        // Select station
+        function selectStation(stationId) {
+            if (selectedStation === stationId) {
+                selectedStation = null;
+            } else {
+                selectedStation = stationId;
+            }
+            
+            updateStationSelection();
+        }
+        
+        // Update station selection UI
+        function updateStationSelection() {
+            const cards = document.querySelectorAll('.station-card');
+            cards.forEach(card => {
+                card.classList.remove('selected');
+                if (parseInt(card.dataset.id) === selectedStation) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+        
+        // Update selection display
+        function updateSelection() {
+            const selectedItems = document.getElementById('selectedItems');
+            const totalAmount = document.getElementById('totalAmount');
+            
+            let total = 0;
+            let itemsHtml = '';
+            
+            selectedVouchers.forEach(voucher => {
+                const itemTotal = voucher.price * voucher.quantity;
+                total += itemTotal;
+                itemsHtml += `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>${voucher.quantity}x ${voucher.name}</span>
+                        <span>$${itemTotal.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            selectedItems.innerHTML = itemsHtml || 'No items selected';
+            totalAmount.value = '$' + total.toFixed(2);
+            
+            // Update voucher card selection
+            const cards = document.querySelectorAll('.voucher-card');
+            cards.forEach(card => {
+                const voucherId = parseInt(card.dataset.id);
+                card.classList.toggle('selected', selectedVouchers.some(v => v.id === voucherId));
+            });
+            
+            // Recalculate change
+            calculateChange();
+        }
+        
+        // Calculate change
+        function calculateChange() {
+            const totalInput = document.getElementById('totalAmount');
+            const receivedInput = document.getElementById('amountReceived');
+            const changeInput = document.getElementById('changeAmount');
+            
+            const total = parseFloat(totalInput.value.replace('$', '')) || 0;
+            const received = parseFloat(receivedInput.value) || 0;
+            
+            const change = received - total;
+            changeInput.value = change > 0 ? '$' + change.toFixed(2) : '$0.00';
+            
+            // Show alert if insufficient amount
+            if (received > 0 && received < total) {
+                showAlert('Amount received is less than total amount', 'danger');
+            } else {
+                hideAlert();
+            }
+        }
+        
+        // Process sale
+        function processSale() {
+            if (selectedVouchers.length === 0) {
+                showAlert('Please select at least one voucher', 'danger');
+                return;
+            }
+            
+            const customerName = document.getElementById('customerName').value;
+            const amountReceived = parseFloat(document.getElementById('amountReceived').value) || 0;
+            const total = parseFloat(document.getElementById('totalAmount').value.replace('$', ''));
+            const change = parseFloat(document.getElementById('changeAmount').value.replace('$', '')) || 0;
+            
+            if (amountReceived < total) {
+                showAlert('Amount received is less than total amount', 'danger');
+                return;
+            }
+            
+            if (!confirm('Process this sale?')) {
+                return;
+            }
+            
+            fetch('vouchers.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ajax=true&action=process_sale&items=${encodeURIComponent(JSON.stringify(selectedVouchers))}&customer_name=${encodeURIComponent(customerName)}&amount_received=${amountReceived}&change_amount=${change}&station_id=${selectedStation || 0}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let successMessage = data.message;
+                    if (data.voucher_codes && data.voucher_codes.length > 0) {
+                        successMessage += '\n\nVoucher Codes:\n' + data.voucher_codes.join('\n');
+                    }
+                    
+                    showAlert(successMessage, 'success');
+                    
+                    // Reset form
+                    selectedVouchers = [];
+                    selectedStation = null;
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('amountReceived').value = '';
+                    updateSelection();
+                    updateStationSelection();
+                    loadStations();
+                    loadVouchers(); // Refresh voucher counts
+                    
+                    // Auto-clear success message after 10 seconds
+                    setTimeout(() => {
+                        hideAlert();
+                    }, 10000);
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Error processing sale: ' . error.message, 'danger');
+            });
+        }
+        
+        // Load sales history
+        function loadHistory() {
+            const date = document.getElementById('historyDate').value;
+            let url = 'vouchers.php?action=history_data';
+            if (date) {
+                url += '&date=' + date;
+            }
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const tbody = document.getElementById('historyTableBody');
+                    tbody.innerHTML = '';
+                    
+                    data.data.forEach(sale => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${sale.id}</td>
+                            <td>${sale.sale_date} ${sale.sale_time}</td>
+                            <td>${sale.customer_name || 'Walk-in'}</td>
+                            <td>${sale.items || 'N/A'}</td>
+                            <td>${sale.voucher_codes || 'N/A'}</td>
+                            <td>${sale.station || 'N/A'}</td>
+                            <td>$${parseFloat(sale.total_amount).toFixed(2)}</td>
+                            <td>$${parseFloat(sale.amount_received || sale.total_amount).toFixed(2)}</td>
+                            <td>$${parseFloat(sale.change_amount || 0).toFixed(2)}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            });
+        }
+        
+        // Load active sessions
+        function loadActiveSessions() {
+            fetch('vouchers.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'ajax=true&action=get_active_sessions'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const tbody = document.getElementById('activeSessionsBody');
+                    tbody.innerHTML = '';
+                    
+                    if (data.data.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #6c757d;">
+                                    No active sessions
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    data.data.forEach(session => {
+                        const remainingMinutes = session.remaining_minutes || 0;
+                        let statusBadge = '<span class="badge badge-success">Active</span>';
+                        let timeClass = '';
+                        
+                        if (remainingMinutes <= 5) {
+                            statusBadge = '<span class="badge badge-danger">Expiring Soon</span>';
+                            timeClass = 'badge-danger';
+                        } else if (remainingMinutes <= 15) {
+                            statusBadge = '<span class="badge badge-warning">Almost Done</span>';
+                            timeClass = 'badge-warning';
+                        }
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${session.station || 'N/A'}</td>
+                            <td>${session.customer_name || 'Walk-in'}</td>
+                            <td>${session.voucher_type || 'N/A'}</td>
+                            <td>${session.sale_time}</td>
+                            <td><span class="badge ${timeClass}">${session.remaining_time || 'N/A'}</span></td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="releaseStation(${session.station_address_id})">
+                                    <i class="fas fa-times"></i> Release
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            });
+        }
+        
+        // Release station
+        function releaseStation(stationId) {
+            if (!confirm('Release this station?')) {
+                return;
+            }
+            
+            fetch('vouchers.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ajax=true&action=release_station&station_id=${stationId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    loadActiveSessions();
+                    loadStations();
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            });
+        }
+        
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+        }
+        
+        // Hide alert
+        function hideAlert() {
+            document.getElementById('alertMessage').style.display = 'none';
+        }
+        
+        // Auto-refresh active sessions every minute
+        if ('<?php echo $action; ?>' === 'active') {
+            setInterval(loadActiveSessions, 60000);
+        }
+    </script>
+</body>
+</html>
+<?php
+// Handle history data request
+if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
+    $db = getDB();
+    $date = $_GET['date'] ?? '';
+    
+    $sql = "SELECT vs.*, 
+            CONCAT(lsa.station_code, lsa.desk_number) as station, 
+            GROUP_CONCAT(CONCAT(vsi.quantity, 'x ', vt.name) SEPARATOR ', ') as items,
+            GROUP_CONCAT(DISTINCT v.voucher_code ORDER BY v.id SEPARATOR ', ') as voucher_codes
+            FROM voucher_sales vs
+            LEFT JOIN linkspot_station_addresses lsa ON vs.station_address_id = lsa.id
+            LEFT JOIN voucher_sale_items vsi ON vs.id = vsi.sale_id
+            LEFT JOIN voucher_types vt ON vsi.voucher_type_id = vt.id
+            LEFT JOIN vouchers v ON vs.id = v.sale_id
+            WHERE 1=1";
+    
+    if ($date) {
+        $sql .= " AND vs.sale_date = ?";
+    }
+    
+    $sql .= " GROUP BY vs.id ORDER BY vs.id DESC LIMIT 50";
+    
+    $stmt = $db->prepare($sql);
+    if ($date) {
+        $stmt->bind_param("s", $date);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $sales = [];
+    while ($row = $result->fetch_assoc()) {
+        $sales[] = $row;
+    }
+    
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'data' => $sales]);
+    exit;
+}
+?>"
+
+
+
+
+make sure the "process sale"  button  goes to some kinda second screen afteer the vouchers deductions and the calculations
+
+,, a receipt showing Linkspot intenet cafe
+package ie 1 hour  amount 
+and a small linkspot image at the center
+date 
+Time
+
+recorded by
+
+and a footer
+
+"we are the connecting center"
+
+
+and some options to print the receipt
+
+make sure god error handling and well functioning CRUDS,, keep the UI consisitency

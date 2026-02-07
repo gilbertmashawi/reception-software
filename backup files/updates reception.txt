@@ -1,0 +1,17 @@
+no of members,,
+unpaid,,,,members and balances
+rating,,, in stars,,, or paid,, partial,, left ,,
+day end
+
+,, export,,,totals,, hrs,, daily,, .. ,,, laptoptops, board rooms
+total member,, new member .. left
+
+from,, month to day...$$
+workstations....
+daily... 1 hrs,2 hrrs,, 3,, hrs,, 5hr .,, ,,
+permanent members
+
+Linkspot 
+add a plus icon rounded button to show add member form
+
+expand the stations to add realese and view deatils of alocations

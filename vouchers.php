@@ -1096,6 +1096,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
         .receipt {
             font-family: 'Courier New', monospace;
             text-align: center;
+            page-break-inside: avoid; /* Prevent page breaks inside receipt */
+            page-break-after: avoid; /* Don't force a page break after */
         }
         
         .receipt-header {
@@ -1151,8 +1153,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
         }
         
         .voucher-code {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 16px;
             letter-spacing: 2px;
             color: var(--primary);
             padding: 10px;
@@ -1219,8 +1220,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
                 background: white;
             }
             .modal-content {
-                width: 100%;
-                max-width: 100%;
+                width: 80mm;
+                max-width: 80mm;
+                margin: 0 auto;
+                padding: 5mm;
                 box-shadow: none;
                 border: none;
             }
@@ -1230,7 +1233,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
             .close {
                 display: none !important;
             }
+
+         .receipt {
+            page-break-after: always !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+                }
         }
+        
     </style>
 </head>
 <body>
@@ -1605,6 +1615,39 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
         function switchTab(tab) {
             window.location.href = 'vouchers.php?action=' + tab;
         }
+
+
+    // addeed print function
+// Print receipt
+function printReceipt() {
+    // Open print dialog
+    window.print();
+    
+    // Add cut command after printing
+    setTimeout(function() {
+        // Create a hidden iframe with ESC/POS cut command
+        var cutFrame = document.createElement('iframe');
+        cutFrame.style.display = 'none';
+        cutFrame.src = 'data:text/html;charset=utf-8,' + 
+            encodeURIComponent('<script>window.onload=function(){' +
+            'var cutCmd = "\\x1B\\x69";' + // ESC/POS cut command
+            'var blob = new Blob([cutCmd], {type: "text/plain"});' +
+            'var link = document.createElement("a");' +
+            'link.href = URL.createObjectURL(blob);' +
+            'link.download = "cut.prn";' +
+            'link.click();' +
+            '}</scr' + 'ipt>');
+        document.body.appendChild(cutFrame);
+        
+        // Remove iframe after cut
+        setTimeout(function() {
+            document.body.removeChild(cutFrame);
+        }, 1000);
+    }, 500);
+}
+
+
+// end of print functoin
         
         // Load voucher types
         function loadVouchers() {
@@ -1930,146 +1973,92 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
             });
         }
         
-        // Show receipt modal
-        function showReceiptModal(data) {
-            const modal = document.getElementById('receiptModal');
-            const content = document.getElementById('receiptContent');
-            
-            // Group voucher codes by type
-            const voucherGroups = {};
-            data.voucher_codes.forEach(voucher => {
-                if (!voucherGroups[voucher.type]) {
-                    voucherGroups[voucher.type] = [];
-                }
-                voucherGroups[voucher.type].push(voucher);
-            });
-            
-            let receiptHtml = `
-    <div class="receipt" style="position: relative;">
-        
-        <!-- WATERMARK OVERLAY -->
-        <div style="
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        ">
-            <span style="position:absolute; top:10%; left:5%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:30%; left:25%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:50%; left:10%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:70%; left:35%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:20%; left:60%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:40%; left:75%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:60%; left:55%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-            <span style="position:absolute; top:80%; left:70%; 
-                color: rgba(0,128,0,0.08); font-size: 2.5rem; 
-                font-weight: bold; transform: rotate(-30deg); white-space: nowrap;">
-                We are the connecting center
-            </span>
-        </div>
-
-        <!-- RECEIPT CONTENT -->
+// Show receipt modal
+function showReceiptModal(data) {
+    const modal = document.getElementById('receiptModal');
+    const content = document.getElementById('receiptContent');
+    
+    // Group voucher codes by type
+    const voucherGroups = {};
+    data.voucher_codes.forEach(voucher => {
+        if (!voucherGroups[voucher.type]) {
+            voucherGroups[voucher.type] = [];
+        }
+        voucherGroups[voucher.type].push(voucher);
+    });
+    
+    let receiptHtml = `
+    <div class="receipt">
         <div class="receipt-header">
-            <h2>Linkspot</h2>
-
+            <h2>Linkspot </h2>
             <p>Customer: ${data.customer_name || 'Walk-in'}</p>
-            ${data.station_id ? `<p>Station: ${getStationName(data.station_id)}</p>` : ''}
+            ${data.station_id ? `<strong><p style="font-size:22px;">Station: ${getStationName(data.station_id)}</p></strong>` : ''}
             <p>Received from: <?php echo $_SESSION['full_name']; ?></p>
         </div>
 
-        <table class="receipt-details">
-`;
+        <table class="receipt-details" style="width:100%; margin:10px 0;">
+    `;
+    
+    // Add items
+    data.items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        receiptHtml += `
+            <tr>
+                <td>
+                    ${item.quantity}x ${item.name} 
+                    ${item.isLaptop ? '(Laptop)' : ''}
+                </td>
+                <td style="text-align:right;">
+                    $${itemTotal.toFixed(2)}
+                </td>
+            </tr>
+        `;
+    });
+    
+    receiptHtml += `
+            <tr><td colspan="2" style="border-top:1px dashed #000;"></td></tr>
+            <tr>
+                <td><strong>Total:</strong></td>
+                <td style="text-align:right;"><strong>$${data.total.toFixed(2)}</strong></td>
+            </tr>
+            <tr>
+                <td>Amount Received:</td>
+                <td style="text-align:right;">$${data.amount_received.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td>Change:</td>
+                <td style="text-align:right;">$${data.change.toFixed(2)}</td>
+            </tr>
+        </table>
+    `;
+    
+    // Add voucher codes (with price now included)
+    for (const [type, vouchers] of Object.entries(voucherGroups)) {
+        receiptHtml += `
+            <div style="margin:10px 0; text-align:center;">
+                <strong>${type} Voucher${vouchers.length > 1 ? 's' : ''}</strong><br>
+                ${vouchers.map(v => `
+<span style="font-family:monospace; font-size:16px; padding:6px 0; display:inline-block;">
+    ${v.code}
+</span><br>
+                `).join('')}
+            </div>
+        `;
+    }
+    
+    receiptHtml += `
+        <div style="text-align:center; margin-top:10px;">
+            <p>${data.date} ${data.time}</p>
+            <p>Thank you for your purchase!</p>
+        </div>
+    </div>
+    `;
+    
+    content.innerHTML = receiptHtml;
+    modal.style.display = 'flex';
+}
 
-            
-            // Add items
-            data.items.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                receiptHtml += `
-                    <tr>
-                        <td>${item.quantity}x ${item.name} ${item.isLaptop ? '(Laptop)' : ''}</td>
-                        <td>$${itemTotal.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            receiptHtml += `
-                        <tr>
-                            <td colspan="2" style="border-bottom: 1px solid #000;"></td>
-                        </tr>
-                        <tr>
-                            <td>Total:</td>
-                            <td>$${data.total.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Amount Received:</td>
-                            <td>$${data.amount_received.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>Change:</td>
-                            <td>$${data.change.toFixed(2)}</td>
-                        </tr>
-                    </table>
-            `;
-            
-            // Add voucher codes
-            for (const [type, vouchers] of Object.entries(voucherGroups)) {
-                receiptHtml += `
-                    <div class="voucher-code-display">
-                        <h4>${type} Voucher${vouchers.length > 1 ? 's' : ''}</h4>
-                `;
-                
-                vouchers.forEach(voucher => {
-                    receiptHtml += `
-                        <div class="voucher-code">${voucher.code}</div>
-                        <small>Price: $${voucher.price.toFixed(2)}</small>
-                    `;
-                });
-                
-                receiptHtml += `
-                    </div>
-                `;
-            }
-            
-            receiptHtml += `
-                            <p>${data.date} ${data.time}</p>
-                    <p style="margin-top: 20px; font-size: 12px; color: #6c757d;">
-                        Thank you for your purchase!<br>
-                    </p>
-                </div>
-            `;
-            
-            content.innerHTML = receiptHtml;
-            modal.style.display = 'flex';
-        }
+
         
         // Get station name from ID
         function getStationName(stationId) {
@@ -2082,10 +2071,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'history_data') {
             document.getElementById('receiptModal').style.display = 'none';
         }
         
-        // Print receipt
-        function printReceipt() {
-            window.print();
-        }
+        // // Print receipt
+        // function printReceipt() {
+        //     window.print();
+        // }
         
         // Load sales history
         function loadHistory() {

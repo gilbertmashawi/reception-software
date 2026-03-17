@@ -64,6 +64,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <li><a href="summarcity_mall.php?action=shops" class="nav-link <?php echo ($current_page == 'summarcity_mall.php' && ($_GET['action'] ?? '') == 'shops') ? 'active' : ''; ?>">Shop Management</a></li>
             </ul>
         </li>
+
+                <li class="nav-item">
+            <a href="changes.php" class="nav-link <?php echo $current_page == 'changes.php' ? 'active' : ''; ?>">
+                <i class="fas fa-cash"></i>
+                <span>Changes</span>
+            </a>
+        </li>
         
         <li class="nav-item">
             <a href="tasks.php" class="nav-link <?php echo $current_page == 'tasks.php' ? 'active' : ''; ?>">
